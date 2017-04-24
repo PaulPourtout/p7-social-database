@@ -1,0 +1,30 @@
+{
+ "id": "boolean",
+ "firstname": "string",
+ "lastname": "string",
+ "email": "string",
+ "skills": ["string", "string", "..."],
+ "dispo": "boolean",
+ "github":
+   [
+     {
+      "projectID": "boolean",
+      "projectName": "string",
+      "projectDescro": "string",
+      "projectUrl" : "string"
+     },
+     {
+      "projectID": "boolean",
+      "projectName": "string",
+      "projectDescro": "string",
+      "projectUrl" : "string"
+     },
+     {
+      "projectID": "boolean",
+      "projectName": "string",
+      "projectDescro": "string",
+      "projectUrl" : "string"
+     }
+   ],
+ "linkedinUrl": "string"
+}
