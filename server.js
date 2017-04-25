@@ -1,22 +1,26 @@
 const express = require('express'),
   app = express(),
+  ejs = require('ejs'),
   http = require('http'),
   passport = require('passport'),
   util = require('util'),
   bodyParser = require('body-parser'),
   cookieParser = require('cookie-parser'),
-  session = require('cookie-session'),
+  session = require('express-session'),
   logger = require('logger'),
   methodOverride = require('method-override'),
   LinkedInStrategy = require('passport-linkedin').Strategy,
   Sequelize = require('sequelize'),
   port = process.env.PORT || 8080;
 
+  app.set('views', __dirname + '/views');
+  app.set('view engine', 'ejs');
+
   // app.use(logger());
   app.use(cookieParser());
   app.use(bodyParser());
   app.use(methodOverride());
-  app.use(session({ secret: 'keyboard cat' }));
+  app.use(session({ secret: 'keyboard cat', name: 'id' }));
   // Initialize Passport!  Also use passport.session() middleware, to support
   // persistent login sessions (recommended).
   app.use(passport.initialize());
@@ -48,7 +52,7 @@ const express = require('express'),
   passport.use(new LinkedInStrategy({
       consumerKey: LINKEDIN_API_KEY,
       consumerSecret: LINKEDIN_SECRET_KEY,
-      callbackURL: "http://127.0.0.1:8080/auth/linkedin/callback"
+      callbackURL: "http://localhost:8080/auth/linkedin/callback"
     },
     function(token, tokenSecret, profile, done) {
       // asynchronous verification, for effect...
@@ -61,6 +65,14 @@ const express = require('express'),
       });
     }
   ));
+
+  function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+	  return next();
+  }
+  else
+    res.redirect('/account');
+}
 
   app.get('/', function(req, res){
     res.render('index', { user: req.user });
@@ -97,15 +109,13 @@ const express = require('express'),
       res.redirect('/');
     });
 
-  app.get('/logout', function(req, res){
-    req.logout();
-    res.redirect('/');
-  });
+  // app.get('/logout', function(req, res){
+  //   req.logout();
+  //   res.redirect('/');
+  // });
 
 
 
-app.get('/', (req, res) => {
-  res.send('Cest la route !!!!');
-}).listen(port, (req, res) => {
-  console.log('Server is Ok. Listening port ', port);
+app.listen(port, (req, res) => {
+  console.log('Server is Ok. Listening to port ' + port);
 });
