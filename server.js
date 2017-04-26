@@ -10,8 +10,10 @@ const express = require('express'),
   logger = require('logger'),
   methodOverride = require('method-override'),
   LinkedInStrategy = require('passport-linkedin').Strategy,
+  isomorphicFetch = require('isomorphic-fetch'),
   Sequelize = require('sequelize'),
   port = process.env.PORT || 8080;
+  require('es6-promise').polyfill();
 
   app.set('views', __dirname + '/views');
   app.set('view engine', 'ejs');
@@ -52,7 +54,7 @@ const express = require('express'),
   passport.use(new LinkedInStrategy({
       consumerKey: LINKEDIN_API_KEY,
       consumerSecret: LINKEDIN_SECRET_KEY,
-      callbackURL: "http://localhost:8080/auth/linkedin/callback"
+      callbackURL: "/auth/linkedin/callback"
     },
     function(token, tokenSecret, profile, done) {
       // asynchronous verification, for effect...
@@ -71,7 +73,7 @@ const express = require('express'),
 	  return next();
   }
   else
-    res.redirect('/account');
+    res.redirect('/login');
 }
 
   app.get('/', function(req, res){
@@ -79,6 +81,18 @@ const express = require('express'),
   });
 
   app.get('/account', ensureAuthenticated, function(req, res){
+	  fetch('https://api.linkedin.com/v1/people/~?format=json')
+	  .then(res => {
+		//   console.log(res);
+		  return res;
+	  })
+	  .then(result => {
+		 console.log(result);
+	  })
+	  .catch(err => {
+		  console.log('error : ', err);
+	  });
+
     res.render('account', { user: req.user });
   });
 
@@ -109,10 +123,10 @@ const express = require('express'),
       res.redirect('/');
     });
 
-  // app.get('/logout', function(req, res){
-  //   req.logout();
-  //   res.redirect('/');
-  // });
+  app.get('/logout', function(req, res){
+    req.logout();
+    res.redirect('/');
+  });
 
 
 
