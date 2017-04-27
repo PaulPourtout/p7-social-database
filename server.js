@@ -15,8 +15,10 @@ const express = require('express'),
   port = process.env.PORT || 8080;
   require('es6-promise').polyfill();
 
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'ejs');
+  // app.set('views', __dirname + '/views');
+  // app.set('view engine', 'ejs');
+	app.set('src', __dirname + '/src');
+
 
   // app.use(logger());
   app.use(cookieParser());
